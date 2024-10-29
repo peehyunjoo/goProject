@@ -11,7 +11,7 @@ type User struct {
 }
 
 func GetUser(db *sql.DB) (User, error) {
-	rows, err := db.Query("SELECT * FROM users")
+	rows, err := db.Query("SELECT name FROM users")
 	if err != nil {
 		fmt.Println("select error!")
 		log.Fatal(err)
