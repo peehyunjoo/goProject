@@ -3,32 +3,44 @@ package models
 import (
 	"database/sql"
 	"fmt"
-	"log"
 )
 
 type User struct {
 	Name string
 }
 
-func GetUser(db *sql.DB) (User, error) {
-	rows, err := db.Query("SELECT name FROM users")
-	if err != nil {
-		fmt.Println("select error!")
-		log.Fatal(err)
-	}
-
+func GetUser(db *sql.DB, id int) (User, error) {
 	// 결과 출력
 	var user User
-
-	if rows.Next() {
-		err := rows.Scan(&user.Name) // 가져올 컬럼 수에 따라 변경
-		if err != nil {
-			return User{}, err // 에러 반환
+	err := db.QueryRow("SELECT name FROM users where id = ?", id).Scan(&user.Name)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return user, nil // 데이터가 없으면 빈 user와 nil 리턴
 		}
-	} else {
-		return User{}, nil // 결과가 없는 경우 빈 User 반환
+		fmt.Println("Select error!")
+		return user, err // 에러 발생 시 에러를 리턴합니다.
 	}
 
 	return user, nil
 
+}
+
+func GetUserAll(db *sql.DB) ([]User, error) {
+	var users []User
+
+	rows, err := db.Query("SELECT name FROM users")
+	if err != nil {
+		return users, nil
+	}
+
+	for rows.Next() {
+		var user User
+		if err := rows.Scan(&user.Name); err != nil {
+			return users, nil
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
 }

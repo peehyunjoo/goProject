@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"goProject/models"
 	router "goProject/routes"
 	"log"
 	"os"
@@ -16,7 +15,6 @@ var db *sql.DB
 
 func init() {
 	fmt.Println("DB 시작!") // 1
-	fmt.Println("test")
 
 	var err error
 
@@ -50,14 +48,7 @@ func main() {
 		log.Fatal("DB connection is nil")
 	}
 
-	// 사용자 가져오기
-	user, err := models.GetUser(db)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(user)
-
 	// Gin 라우터 설정 및 실행
-	router := router.SetupRouter()
+	router := router.SetupRouter(db)
 	router.Run(":8080")
 }
