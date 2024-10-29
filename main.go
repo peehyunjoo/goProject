@@ -16,6 +16,7 @@ var db *sql.DB
 
 func init() {
 	fmt.Println("DB 시작!") // 1
+	fmt.Println("test")
 
 	var err error
 
